@@ -113,7 +113,7 @@ func createword(random *rand.Rand) string {
   return ""
 }
 
-func filter(s string) bool {
+func filter(s, guarantee string) bool {
   if len(s) < 25 || len(s) > 130 {
     return false
   }
@@ -122,17 +122,21 @@ func filter(s string) bool {
     return false
   }
 
+  if guarantee != "" && !strings.Contains(s, guarantee) {
+    return false
+  }
+
   return true
 }
 
-func create(n int) {
+func create(n int, guarantee string) {
   var random *rand.Rand = rand.New(rand.NewSource(time.Now().Unix()))
   var s string
 
   for i := 0; i < n; i++ {
     s = createword(random)
 
-    if filter(s) {
+    if filter(s, guarantee) {
       fmt.Println(s, "\n")
     } else {
       i--
@@ -143,12 +147,17 @@ func create(n int) {
 func main() {
   build()
   n := 30
+  guarantee := ""
 
   if len(os.Args) > 1 {
     n,_ = strconv.Atoi(os.Args[1])
   }
 
+  if len(os.Args) > 2 {
+    guarantee = os.Args[2]
+  }
+
   fmt.Println()
-  create(n)
+  create(n, guarantee)
 }
 
